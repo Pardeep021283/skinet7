@@ -1,7 +1,6 @@
 using Core.Entities;
-using Infrastructure.Data;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -9,27 +8,48 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class ProductsController : Controller
     {
-        private readonly StoreContext _context;       
+        //New code after applying Repository Pattern.
+        private readonly IProductRepository _repo;
+        public ProductsController(IProductRepository repo)
+        {           
+            _repo = repo;           
+        }  
+        
+        [HttpGet]
+        public async Task<ActionResult<List<Product>>> GetProducts()
+        {
+            var products = await _repo.GetProductsAsync();
+            return Ok(products);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Product>> GetProduct(int id)
+        {
+            return await _repo.GetProductByIdAsync(id);
+        }
+
+        /* //Old code before applying Repository Pattern.
+        private readonly StoreContext _context;
 
         public ProductsController(StoreContext context)
         {           
-            _context=context;
+            _context = context;           
         }
 
-        /*Synchronous Get Product Method
+        //Synchronous Get Product Method
         [HttpGet]
         public ActionResult<List<Product>> GetProducts()
         {
             var products = _context.Products.ToList();
             return products;
-        }*/
+        }
 
         //Asynchronous Get Product Method
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
             var products = await _context.Products.ToListAsync();
-            return products;
+            return Ok(products);
         }
 
         [HttpGet("{id}")]
@@ -37,5 +57,6 @@ namespace API.Controllers
         {
             return await _context.Products.FindAsync(id);
         }
+        */
     }
 }
