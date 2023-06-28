@@ -14,6 +14,18 @@ namespace API.Controllers
         {           
             _repo = repo;           
         }  
+
+        [HttpGet("brands")]
+        public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands()
+        {
+            return Ok(await _repo.GetProductBrandsAsync());
+        }
+
+        [HttpGet("types")]
+        public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypes()
+        {
+            return Ok(await _repo.GetProductTypesAsync());
+        }
         
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
@@ -27,6 +39,8 @@ namespace API.Controllers
         {
             return await _repo.GetProductByIdAsync(id);
         }
+
+        
 
         /* //Old code before applying Repository Pattern.
         private readonly StoreContext _context;

@@ -31,7 +31,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//To automatically create/upgrade databae when application starts.
+//To automatically create/upgrade databae and seed data when application starts.
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 var context = services.GetRequiredService<StoreContext>();
@@ -39,6 +39,7 @@ var logger = services.GetRequiredService<ILogger<Program>>();
 try
 {
     await context.Database.MigrateAsync();
+    await StoreContextSeed.SeedAsync(context);
 }
 catch (Exception exp)
 {
